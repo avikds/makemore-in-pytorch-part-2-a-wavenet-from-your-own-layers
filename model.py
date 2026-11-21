@@ -305,8 +305,39 @@ class FlattenConsecutive:
         """FlattenConsecutive has no trainable parameters."""
         return []
 
-# Step 7 - Sequential (not yet solved)
-# TODO: implement
+# Step 7 - Sequential
+class Sequential:
+    def __init__(self, layers):
+        """Initialize the Sequential container with a list of layers."""
+
+        # Store the layers in the order they should be executed.
+        self.layers = layers
+
+        # Store the final output for inspection.
+        self.out = None
+
+    def __call__(self, x):
+        """Pass x through every layer in order."""
+
+        # Sequentially apply each layer to the output of the previous layer.
+        for layer in self.layers:
+            x = layer(x)
+
+        # Store and return the final output.
+        self.out = x
+
+        return self.out
+
+    def parameters(self):
+        """Return every layer's parameters in one flat list."""
+
+        # Collect trainable parameters from all layers.
+        params = []
+
+        for layer in self.layers:
+            params.extend(layer.parameters())
+
+        return params
 
 # Step 8 - build_wavenet (not yet solved)
 # TODO: implement

@@ -16,7 +16,7 @@ python scaffold.py
 - [x] **4.** BatchNorm1d
 - [x] **5.** Embedding
 - [x] **6.** FlattenConsecutive
-- [ ] **7.** Sequential
+- [x] **7.** Sequential
 - [ ] **8.** build_wavenet
 - [ ] **9.** train
 - [ ] **10.** smooth
