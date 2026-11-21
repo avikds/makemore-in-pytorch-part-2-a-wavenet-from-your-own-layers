@@ -15,7 +15,7 @@ python scaffold.py
 - [x] **3.** Tanh and activation_stats
 - [x] **4.** BatchNorm1d
 - [x] **5.** Embedding
-- [ ] **6.** FlattenConsecutive
+- [x] **6.** FlattenConsecutive
 - [ ] **7.** Sequential
 - [ ] **8.** build_wavenet
 - [ ] **9.** train

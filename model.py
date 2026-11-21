@@ -265,8 +265,45 @@ class Embedding:
         """Return the trainable embedding weight matrix."""
         return [self.weight]
 
-# Step 6 - FlattenConsecutive (not yet solved)
-# TODO: implement
+# Step 6 - FlattenConsecutive
+class FlattenConsecutive:
+    def __init__(self, n):
+        """Initialize the layer with the number of consecutive vectors to flatten."""
+
+        if n <= 0:
+            raise ValueError("n must be a positive integer.")
+
+        self.n = n
+
+        # Store the output for inspection.
+        self.out = None
+
+    def __call__(self, x):
+        """Transform (B, T, C) into (B, T // n, C * n).
+        Remove the middle dimension if its size is 1.
+        """
+
+        # Extract the input dimensions.
+        B, T, C = x.shape
+
+        # Ensure the sequence length can be divided into equal groups.
+        if T % self.n != 0:
+            raise ValueError(
+                f"Sequence length {T} must be divisible by n={self.n}."
+            )
+
+        # Group consecutive vectors and concatenate their features.
+        self.out = x.reshape(B, T // self.n, C * self.n)
+
+        # Remove the middle dimension when its size is 1.
+        if self.out.shape[1] == 1:
+            self.out = self.out.squeeze(1)
+
+        return self.out
+
+    def parameters(self):
+        """FlattenConsecutive has no trainable parameters."""
+        return []
 
 # Step 7 - Sequential (not yet solved)
 # TODO: implement
