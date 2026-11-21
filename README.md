@@ -13,7 +13,7 @@ python scaffold.py
 - [x] **1.** load_splits
 - [x] **2.** Linear
 - [x] **3.** Tanh and activation_stats
-- [ ] **4.** BatchNorm1d
+- [x] **4.** BatchNorm1d
 - [ ] **5.** Embedding
 - [ ] **6.** FlattenConsecutive
 - [ ] **7.** Sequential

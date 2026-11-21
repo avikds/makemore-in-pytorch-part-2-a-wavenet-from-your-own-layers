@@ -158,8 +158,83 @@ def activation_stats(t, threshold=0.97):
         "saturated": saturated
     }
 
-# Step 4 - BatchNorm1d (not yet solved)
-# TODO: implement
+# Step 4 - BatchNorm1d
+class BatchNorm1d:
+    def __init__(self, dim, eps=1e-5, momentum=0.1):
+        """gamma, beta (parameters); running_mean, running_var (buffers); training flag."""
+
+        # Hyperparameters.
+        self.eps = eps
+        self.momentum = momentum
+
+        # Learnable parameters: gain and bias.
+        self.gamma = torch.ones(dim)
+        self.beta = torch.zeros(dim)
+
+        # Running statistics used during evaluation.
+        self.running_mean = torch.zeros(dim)
+        self.running_var = torch.ones(dim)
+
+        # Start in training mode.
+        self.training = True
+
+        # Store the output for inspection.
+        self.out = None
+
+    def __call__(self, x):
+        """Normalize over every dimension but the last; batch stats in training,
+        running stats in evaluation.
+        """
+
+        # BatchNorm1d supports 2-D and 3-D inputs.
+        if x.ndim not in (2, 3):
+            raise ValueError(
+                f"Expected a 2-D or 3-D input, but received {x.ndim}-D input."
+            )
+
+        if self.training:
+            # Compute statistics across every dimension except the last.
+            # 2-D: (N, D)    -> reduce over dimension (0,)
+            # 3-D: (N, L, D) -> reduce over dimensions (0, 1)
+            reduce_dims = tuple(range(x.ndim - 1))
+
+            batch_mean = x.mean(dim=reduce_dims)
+            batch_var = x.var(dim=reduce_dims)
+
+            # Use current batch statistics for normalization.
+            mean = batch_mean
+            var = batch_var
+
+            # Update running statistics without tracking gradients.
+            with torch.no_grad():
+                self.running_mean.mul_(1 - self.momentum).add_(
+                    batch_mean.detach(),
+                    alpha=self.momentum
+                )
+
+                self.running_var.mul_(1 - self.momentum).add_(
+                    batch_var.detach(),
+                    alpha=self.momentum
+                )
+
+        else:
+            # Use previously accumulated running statistics in evaluation mode.
+            mean = self.running_mean
+            var = self.running_var
+
+        # Normalize the input using the selected statistics.
+        xhat = (x - mean) / torch.sqrt(var + self.eps)
+
+        # Apply learnable gain (gamma) and bias (beta).
+        self.out = self.gamma * xhat + self.beta
+
+        return self.out
+
+    def parameters(self):
+        """Return the learnable parameters of BatchNorm1d."""
+
+        # Running statistics are buffers, not trainable parameters.
+        return [self.gamma, self.beta]
 
 # Step 5 - Embedding (not yet solved)
 # TODO: implement
