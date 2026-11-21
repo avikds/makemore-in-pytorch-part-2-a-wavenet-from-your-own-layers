@@ -1,2 +1,28 @@
-# makemore-in-pytorch-part-2-a-wavenet-from-your-own-layers
-Continue Andrej Karpathy's makemore by writing the layers the later lectures build: a Linear layer with Kaiming initialization, a Tanh layer you can inspect for saturation, and a BatchNorm1d with learned gain and bias, running statistics and a training flag that handles 3-D inputs correctly. Add Embedding, FlattenConsecutive and a Sequential…
+# makemore in PyTorch, Part 2: A WaveNet From Your Own Layers
+
+Continue Andrej Karpathy's makemore by writing the layers the later lectures build: a Linear layer with Kaiming initialization, a Tanh layer you can inspect for saturation, and a BatchNorm1d with learned gain and bias, running statistics and a training flag that handles 3-D inputs correctly. Add Embedding, FlattenConsecutive and a Sequential container, and assemble the hierarchical WaveNet that fuses eight characters two at a time. Train it while watching update-to-data ratios, smooth the loss curve, evaluate in evaluation mode, compare it with a flat MLP of the same size, and sample new names.
+
+## How to run
+
+```bash
+python scaffold.py
+```
+
+## Steps
+
+- [x] **1.** load_splits
+- [ ] **2.** Linear
+- [ ] **3.** Tanh and activation_stats
+- [ ] **4.** BatchNorm1d
+- [ ] **5.** Embedding
+- [ ] **6.** FlattenConsecutive
+- [ ] **7.** Sequential
+- [ ] **8.** build_wavenet
+- [ ] **9.** train
+- [ ] **10.** smooth
+- [ ] **11.** evaluate
+- [ ] **12.** sample
+
+---
+
+Built on Deep-ML.
