@@ -20,7 +20,7 @@ python scaffold.py
 - [x] **8.** build_wavenet
 - [x] **9.** train
 - [x] **10.** smooth
-- [ ] **11.** evaluate
+- [x] **11.** evaluate
 - [ ] **12.** sample
 
 ---

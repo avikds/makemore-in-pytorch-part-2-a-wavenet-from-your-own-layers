@@ -489,8 +489,35 @@ def smooth(values, k):
 
     return smoothed
 
-# Step 11 - evaluate (not yet solved)
-# TODO: implement
+# Step 11 - evaluate
+def evaluate(model, X, Y):
+    """Mean cross-entropy in evaluation mode, as a float;
+    layers back in training mode afterwards.
+    """
+
+    # Switch every layer to evaluation mode.
+    for layer in model.layers:
+        layer.training = False
+
+    try:
+        # Disable gradient tracking during evaluation.
+        with torch.no_grad():
+
+            # Generate predictions.
+            logits = model(X)
+
+            # Calculate the mean cross-entropy loss.
+            loss = F.cross_entropy(logits, Y)
+
+            # Convert the loss into a Python float.
+            result = loss.item()
+
+    finally:
+        # Restore every layer to training mode.
+        for layer in model.layers:
+            layer.training = True
+
+    return result
 
 # Step 12 - sample (not yet solved)
 # TODO: implement
