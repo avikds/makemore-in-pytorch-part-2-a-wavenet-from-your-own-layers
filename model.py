@@ -120,8 +120,43 @@ class Linear:
         # Include bias only when it exists.
         return [self.weight] + ([self.bias] if self.bias is not None else [])
 
-# Step 3 - Tanh and activation_stats (not yet solved)
-# TODO: implement
+# Step 3 - Tanh and activation_stats
+class Tanh:
+    def __init__(self):
+        # Store the output for inspecting activations.
+        self.out = None
+
+    def __call__(self, x):
+        """tanh(x), also stored in self.out."""
+
+        # Apply the hyperbolic tangent activation function.
+        self.out = torch.tanh(x)
+
+        return self.out
+
+    def parameters(self):
+        """Tanh has no trainable parameters."""
+        return []
+
+
+def activation_stats(t, threshold=0.97):
+    """Return activation statistics:
+    mean, standard deviation, and percentage of saturated activations.
+    """
+
+    # Calculate the mean and standard deviation.
+    mean = t.mean().item()
+    std = t.std().item()
+
+    # Calculate the percentage of values whose absolute magnitude
+    # exceeds the specified saturation threshold.
+    saturated = (t.abs() > threshold).float().mean().item() * 100
+
+    return {
+        "mean": mean,
+        "std": std,
+        "saturated": saturated
+    }
 
 # Step 4 - BatchNorm1d (not yet solved)
 # TODO: implement
