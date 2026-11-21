@@ -11,7 +11,7 @@ python scaffold.py
 ## Steps
 
 - [x] **1.** load_splits
-- [ ] **2.** Linear
+- [x] **2.** Linear
 - [ ] **3.** Tanh and activation_stats
 - [ ] **4.** BatchNorm1d
 - [ ] **5.** Embedding

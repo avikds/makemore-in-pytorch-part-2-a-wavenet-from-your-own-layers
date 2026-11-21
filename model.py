@@ -84,8 +84,41 @@ def load_splits(block_size=8, seed=42):
 
     return itos, splits
 
-# Step 2 - Linear (not yet solved)
-# TODO: implement
+# Step 2 - Linear
+class Linear:
+    def __init__(self, fan_in, fan_out, bias=True, gain=1.0, generator=None):
+        """Kaiming-initialised weight (fan_in, fan_out) and an optional zero bias."""
+
+        # Initialize weights using Kaiming initialization.
+        self.weight = torch.randn(
+            fan_in,
+            fan_out,
+            generator=generator
+        ) * (gain / fan_in ** 0.5)
+
+        # Initialize bias to zero if enabled.
+        self.bias = torch.zeros(fan_out) if bias else None
+
+        # Store the output for inspection.
+        self.out = None
+
+    def __call__(self, x):
+        """x @ weight (+ bias), also stored in self.out."""
+
+        # Apply the linear transformation.
+        self.out = x @ self.weight
+
+        # Add bias if it is enabled.
+        if self.bias is not None:
+            self.out = self.out + self.bias
+
+        return self.out
+
+    def parameters(self):
+        """Return the trainable parameters of the layer."""
+
+        # Include bias only when it exists.
+        return [self.weight] + ([self.bias] if self.bias is not None else [])
 
 # Step 3 - Tanh and activation_stats (not yet solved)
 # TODO: implement
