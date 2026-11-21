@@ -236,8 +236,34 @@ class BatchNorm1d:
         # Running statistics are buffers, not trainable parameters.
         return [self.gamma, self.beta]
 
-# Step 5 - Embedding (not yet solved)
-# TODO: implement
+# Step 5 - Embedding
+class Embedding:
+    def __init__(self, num_embeddings, embedding_dim, generator=None):
+        """Initialize an embedding weight matrix of shape
+        (num_embeddings, embedding_dim).
+        """
+
+        # Initialize the embedding matrix with random values.
+        self.weight = torch.randn(
+            num_embeddings,
+            embedding_dim,
+            generator=generator
+        )
+
+        # Store the output for inspection.
+        self.out = None
+
+    def __call__(self, IX):
+        """Look up embeddings using integer indices and store the result in self.out."""
+
+        # Retrieve the embedding vectors corresponding to the input indices.
+        self.out = self.weight[IX]
+
+        return self.out
+
+    def parameters(self):
+        """Return the trainable embedding weight matrix."""
+        return [self.weight]
 
 # Step 6 - FlattenConsecutive (not yet solved)
 # TODO: implement
