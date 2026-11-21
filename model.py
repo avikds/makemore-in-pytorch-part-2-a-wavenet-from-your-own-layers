@@ -393,8 +393,79 @@ def build_wavenet(vocab_size=27, n_embd=10, n_hidden=68, seed=42):
 
     return model
 
-# Step 9 - train (not yet solved)
-# TODO: implement
+# Step 9 - train
+import torch.nn.functional as F
+
+
+def train(model, X, Y, steps, batch_size=32, lr=0.1, seed=0):
+    """Minibatch SGD with lr, then lr / 10 for the last quarter.
+    Returns (losses, update-to-data log ratios).
+    """
+
+    # Create a seeded random generator for reproducible minibatch sampling.
+    generator = torch.Generator().manual_seed(seed)
+
+    # Store the training loss and update-to-data ratios for every step.
+    losses = []
+    ud = []
+
+    # Determine when to reduce the learning rate.
+    lr_decay_step = int(0.75 * steps)
+
+    # Training loop.
+    for step in range(steps):
+
+        # Use the initial learning rate for the first 75% of steps,
+        # then reduce it by a factor of 10.
+        learning_rate = lr if step < lr_decay_step else lr / 10
+
+        # Randomly sample a minibatch of row indices.
+        ix = torch.randint(
+            0,
+            X.shape[0],
+            (batch_size,),
+            generator=generator
+        )
+
+        # Forward pass: calculate the model's predictions.
+        logits = model(X[ix])
+
+        # Calculate the cross-entropy loss for the minibatch.
+        loss = F.cross_entropy(logits, Y[ix])
+
+        # Reset the gradients of every model parameter.
+        for p in model.parameters():
+            p.grad = None
+
+        # Backpropagation: calculate gradients.
+        loss.backward()
+
+        # Update parameters and calculate update-to-data ratios
+        # without tracking gradients.
+        step_ud = []
+
+        with torch.no_grad():
+
+            for p in model.parameters():
+
+                # Update the parameter using gradient descent.
+                p -= learning_rate * p.grad
+
+                # Monitor update-to-data ratios only for 2-D parameters.
+                if p.ndim == 2:
+                    ratio = (
+                        (learning_rate * p.grad).std() / p.std()
+                    )
+
+                    step_ud.append(torch.log10(ratio).item())
+
+        # Record the minibatch loss as a Python float.
+        losses.append(loss.item())
+
+        # Record update-to-data ratios for this training step.
+        ud.append(step_ud)
+
+    return losses, ud
 
 # Step 10 - smooth (not yet solved)
 # TODO: implement
