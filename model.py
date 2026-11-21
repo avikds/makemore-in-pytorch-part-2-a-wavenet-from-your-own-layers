@@ -467,8 +467,27 @@ def train(model, X, Y, steps, batch_size=32, lr=0.1, seed=0):
 
     return losses, ud
 
-# Step 10 - smooth (not yet solved)
-# TODO: implement
+# Step 10 - smooth
+def smooth(values, k):
+    """Return the mean of every k consecutive values as a list of floats.
+    Raise ValueError if len(values) is not a multiple of k.
+    """
+
+    # Ensure k is a positive integer.
+    if not isinstance(k, int) or isinstance(k, bool) or k <= 0:
+        raise ValueError("k must be a positive integer.")
+
+    # Ensure the sequence length is divisible by k.
+    if len(values) % k != 0:
+        raise ValueError("Length of values must be a multiple of k.")
+
+    # Calculate the average of every consecutive group of k values.
+    smoothed = [
+        float(sum(values[i:i + k]) / k)
+        for i in range(0, len(values), k)
+    ]
+
+    return smoothed
 
 # Step 11 - evaluate (not yet solved)
 # TODO: implement

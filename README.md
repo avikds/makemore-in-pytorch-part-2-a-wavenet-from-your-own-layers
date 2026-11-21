@@ -19,7 +19,7 @@ python scaffold.py
 - [x] **7.** Sequential
 - [x] **8.** build_wavenet
 - [x] **9.** train
-- [ ] **10.** smooth
+- [x] **10.** smooth
 - [ ] **11.** evaluate
 - [ ] **12.** sample
 
