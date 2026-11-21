@@ -21,7 +21,7 @@ python scaffold.py
 - [x] **9.** train
 - [x] **10.** smooth
 - [x] **11.** evaluate
-- [ ] **12.** sample
+- [x] **12.** sample
 
 ---
 

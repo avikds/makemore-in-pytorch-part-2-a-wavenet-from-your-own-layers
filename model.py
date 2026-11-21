@@ -519,6 +519,68 @@ def evaluate(model, X, Y):
 
     return result
 
-# Step 12 - sample (not yet solved)
-# TODO: implement
+# Step 12 - sample
+def sample(model, itos, n, seed, block_size=8):
+    """Sample n names in evaluation mode, each from a context of block_size '.' tokens."""
+
+    # Create a seeded generator for reproducible sampling.
+    generator = torch.Generator().manual_seed(seed)
+
+    # Switch every layer to evaluation mode.
+    for layer in model.layers:
+        layer.training = False
+
+    # Store the generated names.
+    names = []
+
+    try:
+        # Disable gradient tracking during sampling.
+        with torch.no_grad():
+
+            # Generate n names.
+            for _ in range(n):
+
+                # Start with a context containing block_size padding tokens.
+                context = [0] * block_size
+
+                # Store the characters of the current name.
+                name = ""
+
+                while True:
+
+                    # Convert the current context into a PyTorch tensor.
+                    x = torch.tensor([context], dtype=torch.long)
+
+                    # Generate the next-character logits.
+                    logits = model(x)
+
+                    # Convert logits into probabilities.
+                    probabilities = F.softmax(logits, dim=1)
+
+                    # Sample the next character from the probability distribution.
+                    next_char = torch.multinomial(
+                        probabilities,
+                        num_samples=1,
+                        generator=generator
+                    ).item()
+
+                    # Slide the context window forward by one character.
+                    context = context[1:] + [next_char]
+
+                    # Stop generating when the padding token is sampled.
+                    if next_char == 0:
+                        break
+
+                    # Convert the sampled character ID into its character.
+                    name += itos[next_char]
+
+                # Add the completed name to the results.
+                names.append(name)
+
+    finally:
+        # Restore every layer to training mode.
+        for layer in model.layers:
+            layer.training = True
+
+    return names
 
