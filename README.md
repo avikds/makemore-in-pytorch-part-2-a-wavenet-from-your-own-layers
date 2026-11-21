@@ -17,7 +17,7 @@ python scaffold.py
 - [x] **5.** Embedding
 - [x] **6.** FlattenConsecutive
 - [x] **7.** Sequential
-- [ ] **8.** build_wavenet
+- [x] **8.** build_wavenet
 - [ ] **9.** train
 - [ ] **10.** smooth
 - [ ] **11.** evaluate

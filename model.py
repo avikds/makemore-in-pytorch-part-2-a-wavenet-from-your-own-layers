@@ -339,8 +339,59 @@ class Sequential:
 
         return params
 
-# Step 8 - build_wavenet (not yet solved)
-# TODO: implement
+# Step 8 - build_wavenet
+def build_wavenet(vocab_size=27, n_embd=10, n_hidden=68, seed=42):
+    """Build a hierarchical WaveNet for 8 characters of context.
+
+    Architecture:
+        Embedding
+        Three hierarchical blocks:
+            FlattenConsecutive(2)
+            Linear
+            BatchNorm1d
+            Tanh
+        Output Linear
+    """
+
+    # Create a seeded generator for reproducible initialization.
+    generator = torch.Generator().manual_seed(seed)
+
+    # Build the hierarchical WaveNet using the previously defined custom layers.
+    model = Sequential([
+        # Convert character indices into dense embedding vectors.
+        Embedding(vocab_size, n_embd, generator=generator),
+
+        # First block: combine 8 character embeddings into 4 representations.
+        FlattenConsecutive(2),
+        Linear(n_embd * 2, n_hidden, bias=False, generator=generator),
+        BatchNorm1d(n_hidden),
+        Tanh(),
+
+        # Second block: combine 4 representations into 2 representations.
+        FlattenConsecutive(2),
+        Linear(n_hidden * 2, n_hidden, bias=False, generator=generator),
+        BatchNorm1d(n_hidden),
+        Tanh(),
+
+        # Third block: combine 2 representations into a single representation.
+        FlattenConsecutive(2),
+        Linear(n_hidden * 2, n_hidden, bias=False, generator=generator),
+        BatchNorm1d(n_hidden),
+        Tanh(),
+
+        # Final layer: predict the next character from the vocabulary.
+        Linear(n_hidden, vocab_size, generator=generator)
+    ])
+
+    # Reduce the initial output weights to prevent overly confident predictions.
+    with torch.no_grad():
+        model.layers[-1].weight.mul_(0.1)
+
+    # Enable gradient computation for every trainable parameter.
+    for parameter in model.parameters():
+        parameter.requires_grad_(True)
+
+    return model
 
 # Step 9 - train (not yet solved)
 # TODO: implement
